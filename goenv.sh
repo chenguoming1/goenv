@@ -132,15 +132,19 @@ function goe() {
                     cd "$GOHOME/$GOENV/src"
                     ;;
                 deps)
-                    goe cd
-                    go list -f {{.Deps}}
+                    # 显示所有第三方依赖包。
+                    IFS=' ' read -a array <<< `go list -f {{.Deps}}`
+                    for s in "${array[@]}" 
+                    do
+                        if [[ $s = *\.* ]]; then 
+                            echo $s
+                        fi
+                    done
                     ;;
                 debug)
-                    goe cd
                     go build -gcflags "-N -l" -o $GOENV
                     ;;
                 make)
-                    goe cd
                     go build -ldflags "-w" -o $GOENV
                     ;;
             esac
@@ -173,7 +177,7 @@ function goe() {
             echo "  cd         : goto the source directory."
             echo "  on <name>  : activate the environment."
             echo "  off        : deactivate the current environment."
-            echo "  deps       : all (recursively) imported dependencies."
+            echo "  deps       : all 3rd-party imported dependencies."
             echo "  debug      : build debug version."
             echo "  make       : build release version."
             echo "  bak <name> : backup environment files to \$GOHOME."
