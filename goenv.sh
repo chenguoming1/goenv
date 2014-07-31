@@ -72,8 +72,9 @@ function goe() {
                 on)
                     # 检查是否已经激活某目标。
                     if [ "$GOENV" ]; then
-                        echo "Error: environment '$name' has activated!"
-                        return 2
+                        goe off
+                        goe on $name
+                        return
                     fi
 
                     # 检查目标是否已存在。
