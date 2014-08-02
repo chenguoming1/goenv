@@ -110,7 +110,7 @@ function goe() {
             ;;
 
         # --- B. 状态相关命令 --------------------------------------------------- #
-        cd|deps|off|debug|make)
+        cd|deps|off|debug|make|wipe)
             # 检查是否已处于激活状态。
             if [ ! $GOENV ]; then
                 echo "Error: no environment activated!"
@@ -137,8 +137,8 @@ function goe() {
                     IFS=' ' read -a array <<< `go list -f {{.Deps}}`
                     for s in "${array[@]}" 
                     do
-                        if [[ $s = *\.* ]]; then 
-                            echo $s
+                        if [[ $s = *\.*\/* ]]; then  # 包含 "./" 字符。
+                            echo ${s//[\[\]]/} # 移除括号字符。
                         fi
                     done
                     ;;
@@ -147,6 +147,16 @@ function goe() {
                     ;;
                 make)
                     go build -ldflags "-w" -o $GOENV
+                    ;;
+                wipe)
+                    # 删除所有依赖包文件。
+                    dep="$GOHOME/.deps/$GOENV"
+                    subnames=("src" "pkg" "bin")
+                    for sub in ${subnames[@]}
+                    do
+                        cd "$dep/$sub"
+                        rm -rf *
+                    done
                     ;;
             esac
             ;;
@@ -179,6 +189,7 @@ function goe() {
             echo "  on <name>  : activate the environment."
             echo "  off        : deactivate the current environment."
             echo "  deps       : all 3rd-party imported dependencies."
+            echo "  wipe       : wipe all 3rd-party packages."
             echo "  debug      : build debug version."
             echo "  make       : build release version."
             echo "  bak <name> : backup environment files to \$GOHOME."
