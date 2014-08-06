@@ -157,6 +157,8 @@ function goe() {
                         cd "$dep/$sub"
                         rm -rf *
                     done
+
+                    goe cd
                     ;;
             esac
             ;;
