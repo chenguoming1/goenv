@@ -104,7 +104,9 @@ function goe() {
                         return 2
                     fi
 
-                    tar czf "$GOHOME/$name.tar.gz" -C "$GOHOME" "$name" ".deps/$name"
+                    tar czf "$GOHOME/$name.tar.gz" -C "$GOHOME" \
+                        --exclude ".git" --exclude ".DS_Store" --exclude "bin/" --exclude "pkg/" \
+                        "$name" ".deps/$name" 
                     ;;
             esac
             ;;
