@@ -16,8 +16,9 @@
 #   4. 输入 goe 显示帮助信息。
 # 
 
+GOHOME=${GOHOME:-"$HOME/go"}
+
 function goe() {
-    GOHOME=${GOHOME:-"$HOME/go"}
     cmd=$1
 
     case $cmd in 
@@ -204,3 +205,20 @@ function goe() {
             ;;
     esac
 }
+
+# 命令参数自动完成。
+_goe_complete() {
+    cur=${COMP_WORDS[COMP_CWORD]}
+    case $COMP_CWORD in
+        1)
+            use="mk rm ls cd on off deps wipe debug make bak home"
+            ;;
+        2)
+            use=`goe ls`
+            ;;
+    esac
+
+    COMPREPLY=( $( compgen -W "$use" -- $cur ) )
+}
+
+complete -o default -o nospace -F _goe_complete goe
