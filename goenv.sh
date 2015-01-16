@@ -2,18 +2,19 @@
 
 
 # 
-# 为 Golang 项目创建隔离的虚拟环境，包括创建独立目录，设置 GOPATH 环境变量。
+# 为 Golang 创建隔离的工作空间，包括创建独立目录，设置 GOPATH 环境变量。
 # 参考 virtualenvwrapper、github/goenv 等项目源码。
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 
 # 更新: https://github.com/qyuhen
 # 
 # 使用: 
+#
 #   1. 下载本文件，可保存到任意目录。
-#   2. 在启动文件中添加类似以下内容 (注意调整路径)。
-#      export GOHOME=$HOME/myprojects
+#   2. 在启动文件中添加工作空间根目录环境变量，并启动本脚本文件。
+#      $ vim .bashrc
+#      export GOHOME=$HOME/go.workspaces
 #      source goenv.sh
-#   3. 可使用 source 命令使其立即生效。
-#   4. 输入 goe 显示帮助信息。
+#   3. 输入 goe 显示帮助信息。
 # 
 
 GOHOME=${GOHOME:-"$HOME/go"}
@@ -113,12 +114,16 @@ function goe() {
             ;;
 
         # --- B. 状态相关命令 --------------------------------------------------- #
-        cd|deps|off|debug|make|wipe)
+        cd|cdeps|deps|off|debug|make|wipe)
             # 检查是否已处于激活状态。
             if [ ! $GOENV ]; then
                 echo "Error: no environment activated!"
                 return 1
             fi
+
+            src="$GOHOME/$GOENV/src"
+            dep="$GOHOME/.deps/$GOENV"
+            depsrc="$dep/src"
 
             case $cmd in
                 off)
@@ -133,7 +138,10 @@ function goe() {
                     cd "$GOHOME"
                     ;;
                 cd)
-                    cd "$GOHOME/$GOENV/src"
+                    cd "$src"
+                    ;;
+                cdeps)
+                    cd "$depsrc"
                     ;;
                 deps)
                     # 显示所有第三方依赖包。
@@ -153,7 +161,6 @@ function goe() {
                     ;;
                 wipe)
                     # 删除所有依赖包文件。
-                    dep="$GOHOME/.deps/$GOENV"
                     subnames=("src" "pkg" "bin")
                     for sub in ${subnames[@]}
                     do
@@ -187,18 +194,19 @@ function goe() {
             echo "  goe <command> [arg]"
             echo ""
             echo "Command:"
-            echo "  mk <name>  : create isolated environment directory."
-            echo "  rm <name>  : remove the environment directory."
-            echo "  ls         : list all environment."
-            echo "  cd         : goto the source directory."
-            echo "  on <name>  : activate the environment."
-            echo "  off        : deactivate the current environment."
-            echo "  deps       : all 3rd-party imported dependencies."
+            echo "  mk <name>  : create workspace directory."
+            echo "  rm <name>  : remove workspace directory."
+            echo "  ls         : list all workspaces."
+            echo "  cd         : goto source directory."
+            echo "  cdeps      : goto 3rd-party packages source directory."
+            echo "  on <name>  : activate workspace."
+            echo "  off        : deactivate the current workspace."
+            echo "  deps       : list all imported 3rd-party packages."
             echo "  wipe       : wipe all 3rd-party packages."
             echo "  debug      : build debug version."
             echo "  make       : build release version."
-            echo "  bak <name> : backup environment files to \$GOHOME."
-            echo "  home       : goto the \$GOHOME directory."
+            echo "  bak <name> : backup workspace to \$GOHOME."
+            echo "  home       : goto \$GOHOME directory."
             echo ""
             echo "Q.yuhen, 2014. https://github.com/qyuhen"
             echo ""
@@ -211,7 +219,7 @@ _goe_complete() {
     cur=${COMP_WORDS[COMP_CWORD]}
     case $COMP_CWORD in
         1)
-            use="mk rm ls cd on off deps wipe debug make bak home"
+            use="mk rm ls cd cdeps on off deps wipe debug make bak home"
             ;;
         2)
             use=`goe ls`
