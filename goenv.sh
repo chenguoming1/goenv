@@ -114,7 +114,7 @@ function goe() {
             ;;
 
         # --- B. 状态相关命令 --------------------------------------------------- #
-        cd|cdeps|deps|off|debug|make|wipe)
+        cd|cdeps|deps|off|debug|make|wipe|lsdeps)
             # 检查是否已处于激活状态。
             if [ ! $GOENV ]; then
                 echo "Error: no environment activated!"
@@ -170,6 +170,9 @@ function goe() {
 
                     goe cd
                     ;;
+                lsdeps)
+                    tree -d -L 3 "$dep/src"
+                    ;;
             esac
             ;;
 
@@ -197,6 +200,7 @@ function goe() {
             echo "  mk <name>  : create workspace directory."
             echo "  rm <name>  : remove workspace directory."
             echo "  ls         : list all workspaces."
+            echo "  lsdeps     : list 3rd-party directory."
             echo "  cd         : goto source directory."
             echo "  cdeps      : goto 3rd-party packages source directory."
             echo "  on <name>  : activate workspace."
@@ -219,7 +223,7 @@ _goe_complete() {
     cur=${COMP_WORDS[COMP_CWORD]}
     case $COMP_CWORD in
         1)
-            use="mk rm ls cd cdeps on off deps wipe debug make bak home"
+            use="mk rm ls lsdeps cd cdeps on off deps wipe debug make bak home"
             ;;
         2)
             use=`goe ls`
