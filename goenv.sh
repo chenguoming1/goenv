@@ -114,7 +114,7 @@ function goe() {
             ;;
 
         # --- B. 状态相关命令 --------------------------------------------------- #
-        cd|cdeps|deps|off|debug|make|wipe|lsdeps)
+        cd|cde|deps|off|wipe|gets)
             # 检查是否已处于激活状态。
             if [ ! $GOENV ]; then
                 echo "Error: no environment activated!"
@@ -140,7 +140,7 @@ function goe() {
                 cd)
                     cd "$src"
                     ;;
-                cdeps)
+                cde)
                     cd "$depsrc"
                     ;;
                 deps)
@@ -153,12 +153,6 @@ function goe() {
                         fi
                     done
                     ;;
-                debug)
-                    go build -gcflags "-N -l" -o $GOENV
-                    ;;
-                make)
-                    go build -ldflags "-w" -o $GOENV
-                    ;;
                 wipe)
                     # 删除所有依赖包文件。
                     subnames=("src" "pkg" "bin")
@@ -170,18 +164,19 @@ function goe() {
 
                     goe cd
                     ;;
-                lsdeps)
+                gets)
+                    # 显示所有安装的第三方包。
                     tree -d -L 3 "$dep/src"
                     ;;
             esac
             ;;
 
         # --- C. 无参数命令 --------------------------------------------------- #
-        ls|home)
+        all|home)
             case $cmd in
-                ls)
+                all)
                     # 显示所有目标。
-                    ls -l "$GOHOME" | awk '/^d/{print $NF}'
+                    ls "$GOHOME"
                     ;;
                 home)
                     cd "$GOHOME"
@@ -199,18 +194,16 @@ function goe() {
             echo "Command:"
             echo "  mk <name>  : create workspace directory."
             echo "  rm <name>  : remove workspace directory."
-            echo "  ls         : list all workspaces."
-            echo "  lsdeps     : list 3rd-party directory."
-            echo "  cd         : goto source directory."
-            echo "  cdeps      : goto 3rd-party packages source directory."
             echo "  on <name>  : activate workspace."
-            echo "  off        : deactivate the current workspace."
-            echo "  deps       : list all imported 3rd-party packages."
-            echo "  wipe       : wipe all 3rd-party packages."
-            echo "  debug      : build debug version."
-            echo "  make       : build release version."
-            echo "  bak <name> : backup workspace to \$GOHOME."
+            echo "  off        : deactivate workspace."
+            echo "  all        : list all workspaces."
+            echo "  gets       : list installed 3rd-party directory."
+            echo "  deps       : list imported 3rd-party packages."
+            echo "  cd         : goto source directory."
+            echo "  cde        : goto 3rd-party packages source directory."
             echo "  home       : goto \$GOHOME directory."
+            echo "  wipe       : wipe all 3rd-party packages."
+            echo "  bak <name> : backup workspace to \$GOHOME."
             echo ""
             echo "Q.yuhen, 2014. https://github.com/qyuhen"
             echo ""
@@ -223,10 +216,12 @@ _goe_complete() {
     cur=${COMP_WORDS[COMP_CWORD]}
     case $COMP_CWORD in
         1)
-            use="mk rm ls lsdeps cd cdeps on off deps wipe debug make bak home"
+            # 补全第一命令参数。
+            use="mk rm on off all gets deps cd cde home wipe bak"
             ;;
         2)
-            use=`goe ls`
+            # 补全第二名称参数。
+            use=`goe all` # 所有空间名称。
             ;;
     esac
 
