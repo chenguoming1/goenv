@@ -172,9 +172,9 @@ function goe() {
             ;;
 
         # --- C. 无参数命令 --------------------------------------------------- #
-        all|home)
+        list|home)
             case $cmd in
-                all)
+                list)
                     # 显示所有目标。
                     ls "$GOHOME"
                     ;;
@@ -196,7 +196,7 @@ function goe() {
             echo "  rm <name>  : remove workspace directory."
             echo "  on <name>  : activate workspace."
             echo "  off        : deactivate workspace."
-            echo "  all        : list all workspaces."
+            echo "  list       : list all workspaces."
             echo "  gets       : list installed 3rd-party directory."
             echo "  deps       : list imported 3rd-party packages."
             echo "  cd         : goto source directory."
@@ -217,11 +217,11 @@ _goe_complete() {
     case $COMP_CWORD in
         1)
             # 补全第一命令参数。
-            use="mk rm on off all gets deps cd cde home wipe bak"
+            use="mk rm on off list gets deps cd cde home wipe bak"
             ;;
         2)
             # 补全第二名称参数。
-            use=`goe all` # 所有空间名称。
+            use=`goe list` # 所有空间名称。
             ;;
     esac
 
