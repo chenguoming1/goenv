@@ -114,7 +114,7 @@ function goe() {
             ;;
 
         # --- B. 状态相关命令 --------------------------------------------------- #
-        cd|cde|deps|off|wipe|gets)
+        off|cd|cde|deps|inst|wipe|gets)
             # 检查是否已处于激活状态。
             if [ ! $GOENV ]; then
                 echo "Error: no environment activated!"
@@ -123,7 +123,6 @@ function goe() {
 
             src="$GOHOME/$GOENV/src"
             dep="$GOHOME/.deps/$GOENV"
-            depsrc="$dep/src"
 
             case $cmd in
                 off)
@@ -138,10 +137,12 @@ function goe() {
                     cd "$GOHOME"
                     ;;
                 cd)
+                    # 切换到源码目录。
                     cd "$src"
                     ;;
                 cde)
-                    cd "$depsrc"
+                    # 切换到依赖包目录。
+                    cd "$dep"
                     ;;
                 deps)
                     # 显示所有第三方依赖包。
@@ -149,17 +150,25 @@ function goe() {
                     for s in "${array[@]}" 
                     do
                         if [[ $s = *\.*\/* ]]; then  # 包含 "./" 字符。
-                            echo ${s//[\[\]]/} # 移除括号字符。
+                            echo ${s//[\[\]]/}       # 移除括号字符。
                         fi
                     done
+                    ;;
+                inst)
+                    # 安装依赖包。
+                    go clean
+                    goe deps | xargs go get -v -u
                     ;;
                 wipe)
                     # 删除所有依赖包文件。
                     subnames=("src" "pkg" "bin")
                     for sub in ${subnames[@]}
                     do
-                        cd "$dep/$sub"
-                        rm -rf *
+                        p="$dep/$sub"
+                        if [ -d "$p" ]; then
+                            echo "Remove $p ..."
+                            rm -rf "$p"
+                        fi
                     done
 
                     goe cd
@@ -199,6 +208,7 @@ function goe() {
             echo "  list       : list all workspaces."
             echo "  gets       : list installed 3rd-party directory."
             echo "  deps       : list imported 3rd-party packages."
+            echo "  inst       : install imported 3rd-party packages."
             echo "  cd         : goto source directory."
             echo "  cde        : goto 3rd-party packages source directory."
             echo "  home       : goto \$GOHOME directory."
@@ -217,7 +227,7 @@ _goe_complete() {
     case $COMP_CWORD in
         1)
             # 补全第一命令参数。
-            use="mk rm on off list gets deps cd cde home wipe bak"
+            use="mk rm on off list gets deps inst cd cde home wipe bak"
             ;;
         2)
             # 补全第二名称参数。
