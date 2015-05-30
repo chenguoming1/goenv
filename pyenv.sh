@@ -1,12 +1,11 @@
 #!/bin/bash
 
-
 # 
+# source pyenv.sh
 # 
-
-PYHOME=${PYHOME:-"$HOME/python"}
 
 function pye() {
+    PYHOME=${PYHOME:-"$HOME/python"}
     cmd=$1
 
     case $cmd in 
@@ -91,19 +90,19 @@ function pye() {
 
         # --- D. 使用帮助 ----------------------------------------------------- #
         *)
-            echo "PyvenvWrapper for Python 3"
+            echo "Wrapper for Python 3 Virtual Environment."
             echo ""
             echo "Usage:"
             echo "  pye <command> [arg]"
             echo ""
             echo "Command:"
-            echo "  mk <name>  : create virtual environment."
-            echo "  on <name>  : activate virtual environment."
+            echo "  mk <name>  : create venv."
+            echo "  on <name>  : activate venv."
             echo "  off        : deactivate."
-            echo "  cd         : goto project directory."
+            echo "  cd         : goto venv directory."
             echo "  cde        : goto site-packages directory."
-            echo "  list       : list all environments."
-            echo "  home       : goto project directory."
+            echo "  home       : goto project home directory."
+            echo "  list       : list all venvs."
             echo ""
             echo "Q.yuhen, 2015. https://github.com/qyuhen"
             echo ""
