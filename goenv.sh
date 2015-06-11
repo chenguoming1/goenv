@@ -69,7 +69,7 @@ function goe() {
             ;;
 
         # --- B. 状态相关命令 --------------------------------------------------- #
-        off|cd|cde|wipe)
+        off|cd|cde|deps|wipe)
             # 检查是否已处于激活状态。
             if [ ! $GOENV ]; then
                 echo "error: no workspace activated."
@@ -96,6 +96,10 @@ function goe() {
                 cde)
                     # 切换到依赖包目录。
                     cd "$dep"
+                    ;;
+                deps)
+                    # 显示所有第三方包。
+                    tree -d -L 3 "$dep/src"
                     ;;
                 wipe)
                     # 删除所有第三方包。
@@ -137,10 +141,11 @@ function goe() {
             echo "  on <name>  : activate workspace."
             echo "  off        : deactivate workspace."
             echo "  cd         : goto src directory."
-            echo "  cde        : goto thrid-party directory."
+            echo "  cde        : goto third-party directory."
             echo "  home       : goto home directory."
             echo "  list       : list all workspaces."
-            echo "  wipe       : remove all thrid-party packages."
+            echo "  deps       : list all third-party packages."
+            echo "  wipe       : remove all third-party packages."
             echo ""
             echo "Q.yuhen, 2014. https://github.com/qyuhen"
             echo ""
@@ -154,7 +159,7 @@ _goe_complete() {
     case $COMP_CWORD in
         1)
             # 补全第一命令参数。
-            use="mk on off cd cde home list wipe"
+            use="mk on off cd cde home list deps wipe"
             ;;
         2)
             # 补全第二名称参数。
