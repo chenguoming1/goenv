@@ -99,7 +99,7 @@ function goe() {
                     ;;
                 deps)
                     # 显示所有第三方包。
-                    tree -d -L 3 "$dep/src"
+                    tree -d -L 3 --noreport "$dep/src"
                     ;;
                 wipe)
                     # 删除所有第三方包。
