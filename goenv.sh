@@ -85,7 +85,7 @@ function goe() {
                     export PS1=$GOOLD_PS1
 
                     # 取消新导出变量。
-                    unset GOENV GOPATH GOOLD_GOPATH GOOLD_PATH GOOLD_PS1
+                    unset GOENV GOPATH GOOLD_PATH GOOLD_PS1
                     ;;
                 cd)
                     # 切换到源码目录。
