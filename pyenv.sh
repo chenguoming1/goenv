@@ -76,9 +76,9 @@ function pye() {
             ;;
 
         # --- C. 无参数命令 --------------------------------------------------- #
-        list|home)
+        ls|list|home)
             case $cmd in
-                list)
+                ls|list)
                     # 显示所有目标。
                     ls "$PYHOME"
                     ;;
@@ -116,7 +116,7 @@ _pye_complete() {
     case $COMP_CWORD in
         1)
             # 补全第一命令参数。
-            use="mk on off cd cde list home"
+            use="mk on off cd cde ls list home"
             ;;
         2)
             # 补全第二名称参数。

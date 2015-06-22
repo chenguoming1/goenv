@@ -115,9 +115,9 @@ function goe() {
             ;;
 
         # --- C. 无参数命令 --------------------------------------------------- #
-        list|home)
+        ls|list|home)
             case $cmd in
-                list)
+                ls|list)
                     # 显示所有目标。
                     ls "$GOHOME"
                     ;;
@@ -157,7 +157,7 @@ _goe_complete() {
     case $COMP_CWORD in
         1)
             # 补全第一命令参数。
-            use="mk on off cd cde home list deps wipe"
+            use="mk on off cd cde home ls list deps wipe"
             ;;
         2)
             # 补全第二名称参数。
