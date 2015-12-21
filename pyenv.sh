@@ -30,6 +30,7 @@ function pye() {
 
                     # 创建虚拟环境。
                     pyvenv "$dir"
+                    mkdir "$dir/src"
                     ;;
                 on)
                     # 检查是否已经激活某目标。
@@ -53,7 +54,7 @@ function pye() {
             ;;
 
         # --- B. 状态相关命令 --------------------------------------------------- #
-        off|cd|cde)
+        off|cd|cde|deps)
             # 检查是否已处于激活状态。
             if [ ! $VIRTUAL_ENV ]; then
                 echo "error: no venv activated."
@@ -66,11 +67,15 @@ function pye() {
                     ;;
                 cd)
                     # 切换到源码目录。
-                    cd "$VIRTUAL_ENV"
+                    cd "$VIRTUAL_ENV/src"
                     ;;
                 cde)
                     # 切换到依赖包目录。
                     cd `python -c "import sys; print(sys.path[-1])"`
+                    ;;
+                deps)
+                    # 显示所有第三方包。
+                    pip list
                     ;;
             esac
             ;;
@@ -96,13 +101,14 @@ function pye() {
             echo "  pye <command> [arg]"
             echo ""
             echo "Command:"
-            echo "  mk <name>  : create venv."
-            echo "  on <name>  : activate venv."
-            echo "  off        : deactivate."
-            echo "  cd         : goto venv directory."
-            echo "  cde        : goto site-packages directory."
-            echo "  home       : goto project home directory."
-            echo "  list       : list all venvs."
+            echo "  mk <name> : create venv."
+            echo "  on <name> : activate venv."
+            echo "  off       : deactivate."
+            echo "  cd        : goto venv directory."
+            echo "  cde       : goto site-packages directory."
+            echo "  home      : goto project home directory."
+            echo "  list      : list all venvs."
+            echo "  deps      : list all third-party packages."
             echo ""
             echo "Q.yuhen, 2015. https://github.com/qyuhen"
             echo ""

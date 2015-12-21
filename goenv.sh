@@ -57,7 +57,7 @@ function goe() {
 
                     # 导出新设置。
                     export GOENV="$name"
-                    export GOPATH="$dep:$dir:$GOPATH"
+                    export GOPATH="$dep:$dir"
                     export PATH="$dep/bin:$dir/bin:$PATH"
                     export PS1="(go.$name) $PS1"    
 
