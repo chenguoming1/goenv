@@ -68,15 +68,16 @@ function goe() {
             ;;
 
         # --- B. 状态相关命令 --------------------------------------------------- #
-        off|cd|cde|deps|wipe)
+        off|cd|cde|cdw|deps|clean|wipe)
             # 检查是否已处于激活状态。
             if [ ! $GOENV ]; then
                 echo "error: no workspace activated."
                 return 1
             fi
 
-            src="$GOHOME/$GOENV/src"
-            dep="$GOHOME/$GOENV/.deps"
+            dir="$GOHOME/$GOENV"
+            src="$dir/src"
+            dep="$dir/.deps"
 
             case $cmd in
                 off)
@@ -95,9 +96,28 @@ function goe() {
                     # 切换到依赖包目录。
                     cd "$dep"
                     ;;
+                cdw)
+                    # 切换到工作空间目录。
+                    cd "$dir"
+                    ;;
                 deps)
                     # 显示所有第三方包。
                     tree -d -L 3 --noreport "$dep/src"
+                    ;;
+                clean)
+                    # 清除当前目录。
+                    go clean
+
+                    # 清除 bin,pkg 目录。
+                    subs=("bin" "pkg")
+                    for sub in ${subs[@]}
+                    do
+                        d="$dir/$sub"
+                        echo "remove $d ..."
+                        cd "$d" && rm -rf *
+                    done
+
+                    goe cd
                     ;;
                 wipe)
                     # 删除所有第三方包。
@@ -106,9 +126,9 @@ function goe() {
                     do
                         d="$dep/$sub"
                         echo "remove $d ..."
-                        cd "$d"
-                        rm -rf *
+                        cd "$d" && rm -rf *
                     done
+                    
                     goe cd
                     ;;
             esac
@@ -140,9 +160,11 @@ function goe() {
             echo "  off        : deactivate workspace."
             echo "  cd         : goto src directory."
             echo "  cde        : goto third-party directory."
+            echo "  cdw        : goto workspace directory."
             echo "  home       : goto home directory."
             echo "  list       : list all workspaces."
             echo "  deps       : list all third-party packages."
+            echo "  clean      : remove object files from all directories."
             echo "  wipe       : remove all third-party packages."
             echo ""
             echo "Q.yuhen, 2014. https://github.com/qyuhen"
@@ -157,7 +179,7 @@ _goe_complete() {
     case $COMP_CWORD in
         1)
             # 补全第一命令参数。
-            use="mk on off cd cde home ls list deps wipe"
+            use="mk on off cd cde cdw home ls list deps clean wipe"
             ;;
         2)
             # 补全第二名称参数。
