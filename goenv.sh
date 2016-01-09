@@ -106,7 +106,8 @@ function goe() {
                     ;;
                 clean)
                     # 清除当前目录。
-                    go clean
+                    p=`pwd`
+                    go clean -i
 
                     # 清除 bin,pkg 目录。
                     subs=("bin" "pkg")
@@ -117,9 +118,11 @@ function goe() {
                         cd "$d" && rm -rf *
                     done
 
-                    goe cd
+                    cd "$p"
                     ;;
                 wipe)
+                    p=`pwd`
+
                     # 删除所有第三方包。
                     subs=("src" "pkg" "bin")
                     for sub in ${subs[@]}
@@ -129,7 +132,7 @@ function goe() {
                         cd "$d" && rm -rf *
                     done
                     
-                    goe cd
+                    cd "$p"
                     ;;
             esac
             ;;
@@ -155,17 +158,17 @@ function goe() {
             echo "  goe <command> [arg]"
             echo ""
             echo "Command:"
-            echo "  mk <name>  : create workspace directory."
-            echo "  on <name>  : activate workspace."
-            echo "  off        : deactivate workspace."
-            echo "  cd         : goto src directory."
-            echo "  cde        : goto third-party directory."
-            echo "  cdw        : goto workspace directory."
-            echo "  home       : goto home directory."
-            echo "  list       : list all workspaces."
-            echo "  deps       : list all third-party packages."
-            echo "  clean      : remove object files from all directories."
-            echo "  wipe       : remove all third-party packages."
+            echo "  mk <name> : create workspace directory."
+            echo "  on <name> : activate workspace."
+            echo "  off       : deactivate workspace."
+            echo "  cd        : goto src directory."
+            echo "  cde       : goto third-party directory."
+            echo "  cdw       : goto workspace directory."
+            echo "  home      : goto home directory."
+            echo "  list      : list all workspaces."
+            echo "  deps      : list all third-party packages."
+            echo "  clean     : remove object files from all directories."
+            echo "  wipe      : remove all third-party packages."
             echo ""
             echo "Q.yuhen, 2014. https://github.com/qyuhen"
             echo ""
